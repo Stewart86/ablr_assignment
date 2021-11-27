@@ -1,33 +1,32 @@
 import logging
 import time
 from base64 import b64encode
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 from urllib.parse import quote, urlencode
-from cryptography.x509.base import Certificate
 
 import jwt
-from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.x509 import load_pem_x509_certificate
+from cryptography.x509.base import Certificate
 from django.utils.encoding import force_bytes, force_text
 from jwcrypto import jwe, jwk
 
-from ..ablr import settings
+from ablr import settings
 
 log = logging.getLogger(__name__)
 
 myinfo_cert_obj: Certificate = load_pem_x509_certificate(
-    force_bytes(settings.MYINFO_PUBLIC_CERT), default_backend()
+    settings.MYINFO_PUBLIC_CERT.encode()
 )
-public_key_str = str(myinfo_cert_obj.public_key())
+public_key_str = myinfo_cert_obj.public_key()
 
 
 def create_signature(
     raw_message: str, private_key_data: Optional[str] = settings.MYINFO_PRIVATE_KEY
 ) -> str:
     private_key = serialization.load_pem_private_key(
-        force_bytes(private_key_data), password=None, backend=default_backend()
+        force_bytes(private_key_data), password=None
     )
     signature = private_key.sign(
         force_bytes(raw_message), padding.PKCS1v15(), hashes.SHA256()  # type: ignore
@@ -42,9 +41,9 @@ def generate_authorization_header(
     See: https://www.ndi-api.gov.sg/assets/lib/trusted-data/myinfo/specs/myinfo-kyc-v2.1.1.yaml.html#section/Security/Request-Signing  # noqa: E501
     """
     # A) Construct the Authorisation Token Parameters
-    timestamp = int(time.time() * 1000)
-    nonce = timestamp * 100
-    default_apex_headers = {
+    timestamp: int = int(time.time() * 1000)
+    nonce: int = timestamp * 100
+    default_apex_headers: dict[str, Any] = {
         "app_id": settings.MYINFO_CLIENT_ID,
         "nonce": nonce,
         "signature_method": "RS256",
@@ -53,15 +52,15 @@ def generate_authorization_header(
 
     # B) Forming the Base String
     # Base String is a representation of the entire request (ensures message integrity)
-    base_params = default_apex_headers.copy()
+    base_params: dict[str, Any] = default_apex_headers.copy()
     base_params.update(params)
-    query = sorted(base_params.items())
-    base_params_str = urlencode(query, safe=",/:", quote_via=quote)
+    query: list[Tuple[str, Any]] = sorted(base_params.items())
+    base_params_str: str = urlencode(query, safe=",/:", quote_via=quote)
 
-    base_string = f"{method.upper()}&{url}&{base_params_str}"
+    base_string: str = f"{method.upper()}&{url}&{base_params_str}"
 
     # C) Signing Base String to get Digital Signature
-    signature = create_signature(base_string)
+    signature: str = create_signature(base_string)
     log.info("Signature: %s", signature)
 
     # D) Assembling the Authorization Header

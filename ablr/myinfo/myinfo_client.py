@@ -1,14 +1,15 @@
 import logging
 from json import JSONDecodeError
-from typing import Any, Union, Final
+from typing import Any, Final, Union
 from urllib.parse import quote, urlencode
 
 import requests
 from requests.models import Response
 from requests.sessions import Session
-from myinfo.security import generate_authorization_header
 
-from ..ablr import settings
+from ablr import settings
+
+from .security import generate_authorization_header
 
 log = logging.getLogger(__name__)
 

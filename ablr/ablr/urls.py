@@ -15,7 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.urls.conf import re_path
+from myinfo import views
+
+from . import views as main_view
 
 urlpatterns = [
+    re_path(r"^$", main_view.index),
     path("admin/", admin.site.urls),
+    path("api/myinfo/login/", views.login),
+    path("api/myinfo/retrieve/", views.retrieve),
+]
+
+# For other React managed routes
+urlpatterns += [
+    # match all other pages
+    re_path(r"^(?:.*)/?$", main_view.index),
 ]

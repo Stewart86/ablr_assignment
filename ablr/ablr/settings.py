@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+from textwrap import dedent
 from typing import Final
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,8 +29,10 @@ SECRET_KEY: Final = "django-insecure-!$)_l70b2-1uswhkn2m=2)9)eq@5yk)ajq681@ppfo$
 DEBUG: Final = True
 TEST: Final = True
 
-ALLOWED_HOSTS: Final[list[str]] = []
+ALLOWED_HOSTS: Final[list[str]] = ["localhost", "localhost:3000", "127.0.0.1"]
+
 CORS_ORIGIN_ALLOW_ALL: Final = True
+# CORS_ALLOWED_ORIGINS = ["http://localhost:3000", "http://localhost:3001"]
 
 # Application definition
 
@@ -49,7 +52,7 @@ MIDDLEWARE: Final = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    # "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -62,7 +65,7 @@ ROOT_URLCONF: Final = "ablr.urls"
 TEMPLATES: Final = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "frontend"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -125,8 +128,12 @@ USE_TZ: Final = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL: Final = "/static/"
-
+STATIC_URL = "/dist/"
+# Extra places for collectstatic to find static files.
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [
+    BASE_DIR / "frontend/build",
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -152,7 +159,8 @@ if TEST:
     # this is MyInfo private key that is used:
     # - to sign our requests to MyInfo, and
     # - to decrypt personal data returned back
-    MYINFO_PRIVATE_KEY = """
+    MYINFO_PRIVATE_KEY = dedent(
+        """
     -----BEGIN PRIVATE KEY-----
     MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDGBRdsiDqKPGyH
     gOpzxmSU2EQkm+zYZLvlPlwkwyfFWLndFLZ3saxJS+LIixsFhunrrUT9ZZ0x+bB6
@@ -181,10 +189,12 @@ if TEST:
     2ne2fSaYM4p0o147O9Ty8jCyY9vuh/ZGid6qUe3TBI6/okWfmYw6FVbRpNfVEeG7
     kPfkDW/JdH7qkWTFbh3eH1k=
     -----END PRIVATE KEY-----
-    """.strip()
+    """
+    ).strip()
 
     # this is MyInfo X.509 Public Key Certificate
-    MYINFO_PUBLIC_CERT = """
+    MYINFO_PUBLIC_CERT = dedent(
+        """
     -----BEGIN CERTIFICATE-----
     MIIGtTCCBJ2gAwIBAgINAMqXqT4AAAAAV8nKdjANBgkqhkiG9w0BAQsFADBoMQsw
     CQYDVQQGEwJTRzEYMBYGA1UEChMPTmV0cnVzdCBQdGUgTHRkMSYwJAYDVQQLEx1O
@@ -223,7 +233,8 @@ if TEST:
     BKTTdZkGqGLQE9LMDYPNsH8BaeXb9U98W9XeXG6eKAX2gkEWzPgC1ebb7ZBEmLXb
     GR2PyiNqvibfB7US70IBQik7J2WU9XvM9z+YiQlpVWMwQb2TDb2FCNk=
     -----END CERTIFICATE-----
-    """.strip()
+    """
+    ).strip()
 
 MYINFO_ATTRS: Final = (
     "uinfin,name,sex,race,nationality,dob,email,mobileno,regadd,housingtype,hdbtype,marital,edulevel,"
