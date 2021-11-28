@@ -5,7 +5,7 @@
 ### Running Requirements
 1. Python 3.10
 2. Poetry `pip install poetry`
-3. Install Packages `poetry install
+3. Install Packages `poetry install`
 
 ### Developement Requirements (including running requirements)
 1. Node > 14.17.0 < 17.1.0
@@ -14,7 +14,7 @@
 ### Run local server
 Make sure python and poetry is installed.
 
-**NOTE:** port is important here as MyInfo test server only allow this port
+**NOTE:** port is important here as MyInfo test server only allow this port for callback
 
 Within `poetry shell`
 
