@@ -25,7 +25,7 @@ python ablr/manage.py runserver 127.0.0.1:3001
 or
 
 
-without `poetry shell`
+Without `poetry shell`
 ```bash
 poetry run ablr/manage.py runserver 127.0.0.1:3001
 ```

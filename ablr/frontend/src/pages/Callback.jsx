@@ -46,16 +46,15 @@ export default function Callback() {
         const api_data = await response.json()
         setData(api_data)
         setLoading(false)
-        console.log(data)
-      } else if (response.status === 400) {
-        setError()
+      } else if (response.status === 400 || response.status === 500) {
+        setError(true)
       }
     }
     getPerson()
     return () => {
       mounted = false
     }
-  }, [searchParams, data])
+  }, [searchParams])
 
   if (error) {
     return <>Something when wrong, please try again <a href="/">here</a>.</>

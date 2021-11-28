@@ -22,7 +22,7 @@ const convert = (value) => {
 }
 
 const NOALine = ({ title, values, heading = false, currency = false }) => (
-  <div className={`flex flex-row ${heading ? "font-bold" : ""}`}>
+  <div className={`flex flex-row ${heading && "font-bold"}`}>
     <div className="w-64">{title}</div>
     <div className="flex w-full">
       {values.map((item, i) => (
@@ -32,8 +32,11 @@ const NOALine = ({ title, values, heading = false, currency = false }) => (
   </div>
 )
 
-const NOAHistory = ({ history }) => (
-  <div className="flex flex-col w-3/4">
+const NOAHistory = ({ history }) => {
+  if (history === undefined) {
+    return <div className="flex flex-col pr-10">No NOA</div>
+  }
+  return (<div className="flex flex-col pr-10">
     <NOALine title="Year Of Assessment" values={history.map((i) => i.yearofassessment.value)} heading />
     <NOALine title="Employment" values={history.map((i) => i.employment.value)} currency />
     <NOALine title="Trade" values={history.map((i) => i.trade.value)} currency />
@@ -42,10 +45,11 @@ const NOAHistory = ({ history }) => (
     <NOALine title="Total Income" values={history.map((i) => i.amount.value)} heading currency />
     <NOALine title="Tax Clearance" values={history.map((i) => i.taxclearance.value)} heading />
   </div>
-)
+  )
+}
 
 const CPFAccount = ({ title, value }) => (
-  <div className="flex flex-col w-3/4">
+  <div className="flex flex-col pr-10">
     <div className={`flex flex-row`}>
       <div className="w-64">{title}</div>
       <div className="flex-1 text-right">{convert(value)}</div>
@@ -53,40 +57,46 @@ const CPFAccount = ({ title, value }) => (
   </div>
 )
 
-const CPFContribution = ({ history }) => (
-  <div className="flex flex-col w-3/4 h-full">
-    <div className="flex flex-row">
-      <div className="w-1/4 font-semibold">
-        For Month
+
+const CPFContribution = ({ history }) => {
+  if (history === undefined) {
+    return <div className="flex flex-col pr-10">No CPF Contribution</div>
+  }
+  return (
+    <div className="flex flex-col pr-10 h-full">
+      <div className="flex flex-row">
+        <div className="w-1/4 font-semibold">
+          For Month
+        </div>
+        <div className="w-1/4 font-semibold">
+          Paid On
+        </div>
+        <div className="w-1/4 font-semibold">
+          Amount (S$)
+        </div>
+        <div className="w-1/4 font-semibold">
+          Employer
+        </div>
       </div>
-      <div className="w-1/4 font-semibold">
-        Paid On
-      </div>
-      <div className="w-1/4 font-semibold">
-        Amount (S$)
-      </div>
-      <div className="w-1/4 font-semibold">
-        Employer
-      </div>
+      {history && history.map((item, i) => (
+        <div className="flex flex-row" key={i}>
+          <div className="w-1/4">
+            {item.month.value}
+          </div>
+          <div className="w-1/4">
+            {item.date.value}
+          </div>
+          <div className="w-1/4">
+            {convert(item.amount.value)}
+          </div>
+          <div className="w-1/4">
+            {item.employer.value}
+          </div>
+        </div>
+      ))}
     </div>
-    {history.map((item, i) => (
-      <div className="flex flex-row" key={i}>
-        <div className="w-1/4">
-          {item.month.value}
-        </div>
-        <div className="w-1/4">
-          {item.date.value}
-        </div>
-        <div className="w-1/4">
-          {convert(item.amount.value)}
-        </div>
-        <div className="w-1/4">
-          {item.employer.value}
-        </div>
-      </div>
-    ))}
-  </div>
-)
+  )
+}
 
 
 export const IncomeCard = ({ data }) => {
