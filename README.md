@@ -35,7 +35,7 @@ poetry run ablr/manage.py runserver 127.0.0.1:3001
 2. button href to django backend `/api/myinfo/login`
 3. django backend `/api/myinfo/login` endpoint provide MyInfo auth url redirection
 4. User accept MyInfo access at `MyInfo.gov.sg`
-5. callback received from MyInto at `/callback` with auth code provided
+5. callback received from MyInfo at `/callback` with auth code provided
 6. frontend call `/api/myinfo/retrieve` with auth code
 6. backend received auth code and decrypt with private key and return data 
 7. frontend received user info and display
